@@ -53,6 +53,27 @@ def load_params(command_group, engine):
         c.argument('restore_point_in_time',
                    help='The point in time to restore from (ISO8601 format), e.g., 2017-04-26T02:10:00+08:00')
 
+    with PolyParametersContext(command='{} server georestore'.format(command_group)) as c:
+        c.expand('sku', engine.models.Sku)
+        c.ignore('name')
+        c.ignore('family')
+        c.ignore('size')
+        c.ignore('tier')
+        c.ignore('capacity')
+
+        c.expand('properties', engine.models.ServerPropertiesForRestore)
+        c.ignore('version')
+        c.ignore('ssl_enforcement')
+        c.ignore('storage_mb')
+
+        c.expand('parameters', engine.models.ServerForCreate)
+        c.ignore('tags')
+        c.ignore('restore_point_in_time')
+        c.argument('location', location_type)
+
+        c.argument('source_server_id', options_list=('--source-server', '-s'),
+                   help='The name or ID of the source server to restore from.')
+        
     with PolyParametersContext(command='{} server configuration set'.format(command_group)) as c:
         c.ignore('source')
         c.argument('value',
